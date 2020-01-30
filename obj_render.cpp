@@ -1,57 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <cmath>
 #include <limits>
-#include <vector>
-#include "geometry.h"
+#include "triangle.hpp"
+#include "model.h"
 
-struct Line {
-    int x1, y1, x2, y2;
-    Vec3f color;
-    
-    void draw( std::vector<Vec3f> &framebuffer, const int width, const int height ) {
-        int dx , dy , x , y;
-        int derror, error;
-
-        bool steep = false;
-        if( std::abs(x1 - x2) < std::abs(y1 - y2)) {
-            std::swap(x1, y1);
-            std::swap(x2, y2);
-            steep = true;
-        }
-
-        if( x1 > x2 ) {
-            std::swap(x1, x2);
-            std::swap(y1, y2);
-        }
-
-        dx = x2 - x1;
-        dy = y2 - y1;
-        y = y1;
-        error = 0;
-        derror = std::abs(dy) * 2;
-        
-        for ( x = x1; x  <= x2 ; x++)
-        {
-            if( 0 <= x && x < width && 0 <= y && y < height ) {
-                if(steep) {
-                    framebuffer[ y + x * width] = color;
-                } else {
-                    framebuffer[ x + y * width] = color;
-                }
-            }
-            error += derror;
-            if ( error > dx) {
-                y += ( y2 > y1 ? 1 : -1); 
-                error -= dx * 2;
-            }
-        }
-        
-    }
-};
-
-
-void render(Line &l) {
+void render(Model &model) {
     const int width = 1024;
     const int height = 768;
 
@@ -66,8 +19,22 @@ void render(Line &l) {
         }
     }
 
-    // Dessin de la ligne
-    l.draw(framebuffer,width, height);
+    for (int i = 0; i < model.nfaces() ; i++)
+    {
+        std::vector<int> face = model.face(i);
+        for (size_t j = 0; j < 3; j++)
+        {
+            Vec3f v0 = model.vert(face[j]);
+            Vec3f v1 = model.vert(face[ (j + 1) % 3]);
+            int x1 = (v0.x + 1.) * width / 2.;
+            int y1 = (v0.y + 1.) * height / 2.;
+            int x2 = (v1.x + 1.) * width / 2.;
+            int y2 = (v1.y + 1.) * height / 2.;
+            Line line = { x1, y1, x2, y2 , Vec3f(1., 1. ,1.) };
+            line.draw(framebuffer, width, height);
+        }
+    }
+    
     
     // Rendu en image
     std::ofstream ofs;
@@ -85,7 +52,11 @@ void render(Line &l) {
 
 int main(int argc, char const *argv[])
 {
-    Line line = { 500 , 458 , 25, 25 ,  Vec3f(.12, 1 , .45) };
-    render(line);
+    Model model("./model/head.obj");
+    if(argc == 2) {
+        model = Model(argv[1]);
+    }
+    
+    render(model);
     return 0;
 }
