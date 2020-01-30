@@ -11,3 +11,6 @@ all:
 
 clean: 
 	@rm -rv ${BUILD}
+
+jpg: all 
+	convert out.ppm out.jpg
