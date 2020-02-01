@@ -1,16 +1,22 @@
-GCC = g++
-FLAGS = -g -Wall
-FILES = obj_render.cpp
-EXE = obj_render.out
+CC = g++
+CFLAGS = -Wall
+EXEC_NAME = obj_render.out
+INCLUDES =
+LIBS =
+OBJ_FILES = image.o model.o obj_render.o
 BUILD = build
 
-all: 
-	${GCC} ${FLAGS} ${FILES} -o ${EXE}
+all : prebuild $(EXEC_NAME)
+
+prebuild : 
 	@if [ ! -d ${BUILD} ]; then mkdir ${BUILD} ; fi
-	@mv ${EXE} ${BUILD}
 
-clean: 
-	@rm -rv ${BUILD}
+clean :
+	rm -r ${BUILD}
 
-jpg: all 
-	convert out.ppm out.jpg
+$(EXEC_NAME) : $(OBJ_FILES)
+	$(CC) -o $(EXEC_NAME) $(OBJ_FILES) $(LIBS)
+	@mv ${OBJ_FILES} ${EXEC_NAME} ${BUILD}
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<

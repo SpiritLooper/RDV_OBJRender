@@ -4,13 +4,13 @@
 #include <vector>
 #include <cmath>
 #include "geometry.h"
-
+#include "image.hpp"
 
 struct Line {
     int x1, y1, x2, y2;
     Vec3f color;
     
-    void draw( std::vector<Vec3f> &framebuffer, const int width, const int height ) {
+    void draw( Image &img ) {
         int dx , dy , x , y;
         int derror, error;
 
@@ -34,13 +34,12 @@ struct Line {
         
         for ( x = x1; x  <= x2 ; x++)
         {
-            if( 0 <= x && x < width && 0 <= y && y < height ) {
-                if(steep) {
-                    framebuffer[ y + x * width] = color;
-                } else {
-                    framebuffer[ x + y * width] = color;
-                }
+            if(steep) {
+                img.setPixel(y,x, color);
+            } else {
+                img.setPixel(x,y, color);
             }
+        
             error += derror;
             if ( error > dx) {
                 y += ( y2 > y1 ? 1 : -1); 
@@ -50,5 +49,13 @@ struct Line {
         
     }
 };
+
+void triangle(Vec2i * pts ,  Image &img, Vec3f color) {
+    for (int i = 0; i < 3; i++)
+    {
+        Line line = { pts[i].x , pts[i].y , pts[ ( i+1 ) % 3].x, pts[ ( i+1 ) % 3].y, color  };
+        line.draw(img);
+    }
+}
 
 #endif
