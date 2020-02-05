@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 EXEC_NAME = obj_render.out
 INCLUDES =
 LIBS =

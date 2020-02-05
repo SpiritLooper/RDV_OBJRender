@@ -11,6 +11,10 @@ void render(Model &model) {
 
     Image img(width , height);
 
+    Vec3f min, max;
+
+    model.get_bbox(min,max);
+
     //Dessin des triangles du model
     for (int i = 0; i < model.nfaces() ; i++)
     {
@@ -32,7 +36,7 @@ void render(Model &model) {
 
 int main(int argc, char const ** argv)
 {
-    std::string file_obj = "./model/diablo3_pose.obj";
+    std::string file_obj = "./model/duck.obj";
     
     if(argc == 2) {
        file_obj = std::string(argv[1]) ;
