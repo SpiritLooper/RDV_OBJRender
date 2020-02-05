@@ -16,6 +16,7 @@ public:
 	Vec3f vert(int i);
 	std::vector<int> face(int idx);
 	void get_bbox(Vec3f &min,Vec3f &max);
+	void sort_faces();
 };
 
 #endif //__MODEL_H__

@@ -47,9 +47,9 @@ void Image::flip(const int type) {
         for (int y = 0; y < height; y++)
         {
             if ( type ==  HORIZONTAL_FLIP ) {
-                framebuffer_tmp[ x + y * width ] = framebuffer[ x + (height - 1 - y ) * width ];
-            } else {
                 framebuffer_tmp[ x + y * width ] = framebuffer[ ( width - 1 - x ) + ( y ) * width ];
+            } else {
+                framebuffer_tmp[ x + y * width ] = framebuffer[ x + (height - 1 - y ) * width ];
             }
         }
     }

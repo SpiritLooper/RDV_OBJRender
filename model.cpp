@@ -3,8 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 #include "model.h"
-#include <regex>
 
 Model::Model(const char *filename) : verts_(), faces_() {
     std::ifstream in;
@@ -39,7 +39,7 @@ Model::Model(const char *filename) : verts_(), faces_() {
             faces_.push_back(f);
         }
     }
-    std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << std::endl;
+    std::cout << "# v# " << verts_.size() << " f# "  << faces_.size() << std::endl;
 
     // Centrage du model sur l'origine 
     Vec3f min, max, ecart;
@@ -104,5 +104,11 @@ void Model::get_bbox(Vec3f &min, Vec3f &max) {
             max[j] = std::max(max[j],verts_[i][j] );
         }
     }
-   // std::cerr << "bbox: [" << min << " : " << max << "]" << std::endl;
+}
+
+void Model::sort_faces() {
+       
+    std::sort(faces_.begin() , faces_.end() , [this](const std::vector<int>& f1, const std::vector<int>& f2  ) {
+           return  vert( std::min(f1[0], std::min(f1[1],f1[2])) ).z < vert(std::min(f2[0], std::min(f2[1],f2[2]))).z; 
+        }); 
 }

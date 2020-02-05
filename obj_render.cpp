@@ -8,12 +8,15 @@
 void render(Model &model) {
     const int width = 1024;
     const int height = 768;
+    
+    Vec3f light_dir(0,0,-1);
 
-    Image img(width , height);
+    Image img(width , height);  
 
-    Vec3f min, max;
+    std::cout << "Sorting triangle " ; 
+    model.sort_faces();
 
-    model.get_bbox(min,max);
+    std::cout << "Drawing triangle " ; 
 
     //Dessin des triangles du model
     for (int i = 0; i < model.nfaces() ; i++)
@@ -25,13 +28,22 @@ void render(Model &model) {
             Vec3f v = model.vert(face[j]); 
             screen_coords[j] = Vec2i((v.x+1.)*width/2., (v.y+1.)*height/2.); 
             world_coords[j]  = v; 
-        }    
-        triangle(screen_coords, img, Vec3f(1.,1.,1.));
+        }
+
+        Vec3f norm_triangle = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
+        norm_triangle.normalize();
+        float intensity = norm_triangle * light_dir;
+        if(intensity > 0)
+            triangle(screen_coords, img, Vec3f(intensity, intensity, intensity));
     }
     
-    img.flip(HORIZONTAL_FLIP);
+    std::cout << "\nFliping image ..." << std::endl; 
+    img.flip(VERTICAL_FLIP);
 
+    std::cout << "PPM exporting ..." << std::endl;
     img.exportPPM(); 
+
+    std::cout << "Done" << std::endl;
 }
 
 int main(int argc, char const ** argv)
@@ -41,9 +53,11 @@ int main(int argc, char const ** argv)
     if(argc == 2) {
        file_obj = std::string(argv[1]) ;
     }
-   
+    
+    std::cout << "Loading model " << file_obj << std::endl;
     Model model(file_obj.c_str());
     
     render(model);
+    
     return 0;
 }
