@@ -68,7 +68,8 @@ void triangle(Vec2i * pts ,  Image &img, Vec3f color) {
         Vec2i B = pts[0] + (pts[1] - pts[0]) * beta;
         if ( A.x > B.x ) std::swap(A, B);
         for ( int j = A.x ; j <= B.x ; j++ ) {
-            img.setPixel(j, y , color );
+            Vec3f base_color = img.getPixel(j,y);
+            img.setPixel(j, y , base_color + color );
         }
     }
     
@@ -82,7 +83,8 @@ void triangle(Vec2i * pts ,  Image &img, Vec3f color) {
         Vec2i B = pts[1] + (pts[2] - pts[1]) * beta;
         if ( A.x > B.x ) std::swap(A, B);
         for ( int j = A.x ; j <= B.x ; j++ ) {
-            img.setPixel(j, y , color );
+            Vec3f base_color = img.getPixel(j,y);
+            img.setPixel(j, y , base_color + color );
         }
     }
 }

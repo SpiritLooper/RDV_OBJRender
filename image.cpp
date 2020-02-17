@@ -25,7 +25,17 @@ void Image::exportPPM() {
 }
 
 void Image::setPixel(const int x, const int y, Vec3f color) {
-   if( 0 <= x && x < width && 0 <= y && y < height )
+    for (int i = 0; i < 3; i++)
+    {
+        if(color[i] > 1.) 
+            color[i] = 1.;
+        
+        if( color[i] < 0. )
+            color[i] = 0.;
+    }
+    
+
+    if( 0 <= x && x < width && 0 <= y && y < height )
         framebuffer[x + y * width] = color;
 }
 
@@ -55,4 +65,11 @@ void Image::flip(const int type) {
     }
     
     framebuffer = framebuffer_tmp;
+}
+
+Vec3f Image::getPixel(const int x, const int y) {
+    if( 0 <= x && x < width && 0 <= y && y < height )
+        return framebuffer[x + y * width];
+    else 
+        return Vec3f(0,0,0);
 }

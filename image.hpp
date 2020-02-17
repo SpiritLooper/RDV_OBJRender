@@ -17,6 +17,7 @@ public:
 	void exportPPM();
     void setBackground(Vec3f color);
     void setPixel(const int pixel_x, const int pixel_y, Vec3f color);
+    Vec3f getPixel(const int pixel_x, const int pixel_y);
     void flip(const int type);
 };
 
