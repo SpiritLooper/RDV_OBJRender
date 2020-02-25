@@ -61,4 +61,64 @@ template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v) {
 	return s;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+const int DEFAULT_ALLOC=4;
+
+class Matrix {
+    std::vector<std::vector<float> > m;
+    int rows, cols;
+public:
+    Matrix(int r, int c) : m(std::vector<std::vector<float> >(r, std::vector<float>(c, 0.f))), rows(r), cols(c) { }
+
+int nrows() {
+    return rows;
+}
+
+int ncols() {
+    return cols;
+}
+
+std::vector<float>& operator[](const int i) {
+    assert(i>=0 && i<rows);
+    return m[i];
+}
+
+Matrix operator*(const Matrix& a) {
+    assert(cols == a.rows);
+    Matrix result(rows, a.cols);
+    for (int i=0; i<rows; i++) {
+        for (int j=0; j<a.cols; j++) {
+            result.m[i][j] = 0.f;
+            for (int k=0; k<cols; k++) {
+                result.m[i][j] += m[i][k]*a.m[k][j];
+            }
+        }
+    }
+    return result;
+}
+
+	Matrix transpose() {
+    	Matrix result(cols, rows);
+    	for(int i=0; i<rows; i++) {
+   	     for(int j=0; j<cols; j++){
+    	    result[j][i] = m[i][j];
+		 }
+		}
+    	return result;
+	}
+	
+	static Matrix identity(int dimensions) {
+    	Matrix E(dimensions, dimensions);
+    	for (int i=0; i<dimensions; i++) {
+        	for (int j=0; j<dimensions; j++) {
+            	E[i][j] = (i==j ? 1.f : 0.f);
+        	}
+    	}
+    	return E;
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 #endif //__GEOMETRY_H__
