@@ -3,7 +3,7 @@ CFLAGS = -Wall -g
 EXEC_NAME = obj_render.out
 INCLUDES =
 LIBS =
-OBJ_FILES = image.o model.o obj_render.o
+OBJ_FILES = matrix.o camera.o image.o model.o obj_render.o
 BUILD = build
 
 all : prebuild $(EXEC_NAME)

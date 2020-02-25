@@ -4,38 +4,13 @@
 #include "triangle.hpp"
 #include "model.h"
 #include "image.hpp"
+#include "camera.hpp"
 
 const int width = 1024;
 const int height = 768;
-const int depth = 255;
+
 Vec3f light_dir(0,0,-1);
-Vec3f camera(0,0,3);
-
-Matrix view2model(Vec3f v) {
-    Matrix m(4,1);
-    for (int i = 0; i < 3; i++)
-    {
-        m[i][0] = v[i];
-    }
-    m[3][0] = 1.;
-    return m;
-}
-
-Vec3f model2view(Matrix m) {
-    return Vec3f(int(m[0][0]/m[3][0] + 0.5), int(m[1][0]/m[3][0] + 0.5), m[2][0]/m[3][0]);
-}
-
-Matrix viewport(int x, int y, int w, int h) {
-    Matrix m = Matrix::identity(4);
-    m[0][3] = x+w/2.f;
-    m[1][3] = y+h/2.f;
-    m[2][3] = depth/2.f;
-
-    m[0][0] = w/2.f;
-    m[1][1] = h/2.f;
-    m[2][2] = depth/2.f;
-    return m;
-}
+Vec3f camera_pos(0,0,3);
 
 void render(Model &model) {
    
@@ -48,12 +23,12 @@ void render(Model &model) {
     
     Image img(width , height);  
 
+    Camera cam(camera_pos, img, ORTOGRAPHIC);
+
     std::cout << "Sorting triangle " ; 
     model.sort_faces();
 
     std::cout << "Drawing triangle " ; 
-
-    Matrix ViewPort   = viewport(width/8, height/8, width*3/4, height*3/4);
 
     //Dessin des triangles du model
     for (int i = 0; i < model.nfaces() ; i++)
@@ -63,7 +38,7 @@ void render(Model &model) {
         Vec3f world_coords[3]; 
         for (int j=0; j<3; j++) { 
             Vec3f v = model.vert(face[j]); 
-            screen_coords[j] = model2view(ViewPort * view2model(v));
+            screen_coords[j] = cam.camera_transform(v);
             world_coords[j]  = v; 
         }
 
