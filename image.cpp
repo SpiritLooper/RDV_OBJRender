@@ -10,6 +10,14 @@ Image::Image( const int width , const int height ) : framebuffer(width * height)
 
 Image::~Image() {}
 
+int Image::get_width() {
+    return width;
+}
+
+int Image::get_height() {
+    return height;
+}
+
 void Image::exportPPM() {
     std::ofstream ofs;
     ofs.open("./out.ppm");
