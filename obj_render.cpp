@@ -10,7 +10,7 @@ const int width = 1024;
 const int height = 768;
 
 Vec3f light_dir(0,0,-1);
-Vec3f camera_pos(0,0,3);
+Vec3f camera_pos(1,1,3);
 
 void render(Model &model) {
    
@@ -23,7 +23,7 @@ void render(Model &model) {
     
     Image img(width , height);  
 
-    Camera cam(camera_pos, img, ORTOGRAPHIC);
+    Camera cam(camera_pos, img, PERSPECTIVE);
 
     std::cout << "Sorting triangle " ; 
     model.sort_faces();

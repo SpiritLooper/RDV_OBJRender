@@ -2,7 +2,7 @@
 
 const int depth = 255;
 
-Camera::Camera(Vec3f position, Image i, int m) : pos(position), mode(m) {
+Camera::Camera(Vec3f position, Image i, int m) : eye(position), mode(m) {
     ViewPort = Matrix::identity(4);
     
     int x , y , h, w;
@@ -21,6 +21,9 @@ Camera::Camera(Vec3f position, Image i, int m) : pos(position), mode(m) {
 
     Projection = Matrix::identity(4);
     Projection[3][2] = -1.f/position.z;
+
+    center = Vec3f(0, 0, 0);
+    up = Vec3f(0, 1, 0);
 };
 
 Vec3f Camera::m2v(Matrix m) {
@@ -37,13 +40,28 @@ Matrix Camera::v2m(Vec3f v) {
     return m;
 };
 
+Matrix Camera::lookat() {
+    Vec3f z = (eye-center).normalize();
+    Vec3f x = (up^z).normalize();
+    Vec3f y = (z^x).normalize();
+    Matrix res = Matrix::identity(4);
+    for (int i=0; i<3; i++) {
+        res[0][i] = x[i];
+        res[1][i] = y[i];
+        res[2][i] = z[i];
+        res[i][3] = -center[i];
+    }
+    return res;
+}
+
 Vec3f Camera::camera_transform(Vec3f p) {
     Matrix res = ViewPort;
+    Matrix ModelView = lookat();
 
     if (mode == PERSPECTIVE)
     {
         res = res * Projection;
     }
 
-    return m2v(res * v2m(p));
+    return m2v(res * ModelView * v2m(p));
 }
