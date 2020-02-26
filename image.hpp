@@ -21,6 +21,7 @@ public:
     void flip(const int type);
     int get_width();
     int get_height();
+    Image fusionner(Image& img);
 };
 
 #endif //__IMAGE_H__

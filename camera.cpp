@@ -1,6 +1,7 @@
 #include "camera.hpp"
 
 const int depth = 255;
+const float ecart_analygraphe = 0.25;
 
 Camera::Camera(Vec3f position, Image i, int m) : eye(position), mode(m) {
     ViewPort = Matrix::identity(4);
@@ -29,6 +30,16 @@ Camera::Camera(Vec3f position, Image i, int m) : eye(position), mode(m) {
 Vec3f Camera::m2v(Matrix m) {
     return Vec3f(int(m[0][0]/m[3][0] + 0.5), int(m[1][0]/m[3][0] + 0.5), m[2][0]/m[3][0]);
 };
+
+Matrix Camera::translate(float x, float y , float z) {
+    Matrix R = Matrix::identity(4);
+
+    R[0][3] = x;
+    R[1][3] = y;
+    R[2][3] = z;
+
+    return R;
+}
 
 Matrix Camera::v2m(Vec3f v) {
     Matrix m(4,1);
@@ -64,4 +75,24 @@ Vec3f Camera::camera_transform(Vec3f p) {
     }
 
     return m2v(res * ModelView * v2m(p));
+}
+
+void Camera::camera_transform_analygraph(Vec3f p, Vec3f& le, Vec3f& re) {
+    Matrix res = ViewPort;
+
+    if (mode == PERSPECTIVE)
+    {
+        res = res * Projection;
+    }
+    
+    Matrix trans_left =  translate(- ( ecart_analygraphe / 2.f),0 ,0);
+    Matrix trans_right = translate(    ecart_analygraphe / 2.f ,0 ,0);
+
+    Matrix ModelView = lookat();
+
+    Matrix ModelViewLeft  = ModelView * trans_left;
+    Matrix ModelViewRight = ModelView * trans_right;
+
+    le = m2v(res * ModelViewLeft  * v2m(p));
+    re = m2v(res * ModelViewRight * v2m(p));
 }

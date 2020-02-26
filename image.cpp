@@ -81,3 +81,17 @@ Vec3f Image::getPixel(const int x, const int y) {
     else 
         return Vec3f(0,0,0);
 }
+
+Image Image::fusionner(Image& i) {
+    Image res(width, height);
+
+    for (int j = 0; j < width * height; j++)
+    {
+        res.setPixel(j % width, j / width , Vec3f( framebuffer[j].x + i.framebuffer[j].x, 
+                                                  framebuffer[j].y + i.framebuffer[j].y,                                  
+                                                  framebuffer[j].z + i.framebuffer[j].z                                  
+                                                ) );
+    }
+    
+    return res;
+}
