@@ -31,9 +31,6 @@ void render(Model* model, bool _3D) {
 
     Camera cam(camera_pos, img, PERSPECTIVE);
 
-    std::cout << "Sorting triangle " ; 
-    model->sort_faces();
-
     std::cout << "Drawing triangle " ; 
 
     //Dessin des triangles du model
@@ -58,15 +55,14 @@ void render(Model* model, bool _3D) {
         Vec3f norm_triangle = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
         norm_triangle.normalize();
         float intensity = norm_triangle * light_dir;
-        if(intensity > 0) {
-            if(_3D) {
-                triangle(screen_coords_left_eye,  zbuffer_red, img_red, Vec3f(intensity, 0, 0));
-                triangle(screen_coords_right_eye, zbuffer_blue, img_blue, Vec3f(0, 0, intensity));
-            } else {
-                triangle(screen_coords, zbuffer, img, Vec3f(intensity, intensity, intensity));
-            }
-
+        
+        if(_3D) {
+            triangle(screen_coords_left_eye,  zbuffer_red, img_red, Vec3f(intensity, 0, 0));
+            triangle(screen_coords_right_eye, zbuffer_blue, img_blue, Vec3f(0, 0, intensity));
+        } else {
+            triangle(screen_coords, zbuffer, img, Vec3f(intensity, intensity, intensity));
         }
+        
     }
     if(_3D) 
         img = img_red.fusionner(img_blue);

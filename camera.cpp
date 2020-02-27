@@ -1,7 +1,7 @@
 #include "camera.hpp"
 
 const int depth = 255;
-const float ecart_analygraphe = 0.25;
+const float ecart_analygraphe = 0.1;
 
 Camera::Camera(Vec3f position, Image i, int m) : eye(position), mode(m) {
     ViewPort = Matrix::identity(4);
